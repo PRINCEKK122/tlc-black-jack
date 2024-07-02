@@ -1,5 +1,6 @@
 import enums.*;
 import model.Card;
+import model.Player;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -7,17 +8,10 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        Collection<Card> cards = new ArrayList<>();
-        for (CardValue value : CardValue.values()) {
-            for (Suit suit : Suit.values()) {
-                cards.add(new Card(suit, value));
-            }
-        }
+        var p1 = new Player("p1");
+        p1.addCard(new Card(Suit.CLUBS, CardValue.EIGHT));
+        p1.addCard(new Card(Suit.DIAMONDS, CardValue.SIX));
 
-        for (Card card : cards) {
-            System.out.println(card);
-        }
-
-        System.out.println(cards.size());
+        System.out.println(p1.totalCardsValue());
     }
 }
