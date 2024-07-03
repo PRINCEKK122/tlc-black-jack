@@ -22,8 +22,9 @@ public class Main {
         try {
           for (Player player : players)
               game.addPlayer(player);
+          game.inProgress();
         } catch (PlayerAlreadyExistsException | EmptyCardException ex) {
-            System.out.println("Something went wrong. Contact Admin Team!");
+            System.out.println(ex.getMessage());
         }
 
         System.out.println(game);
