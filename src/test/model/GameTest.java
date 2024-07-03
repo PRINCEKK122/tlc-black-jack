@@ -1,9 +1,7 @@
 package model;
 
-import exceptions.PlayerAlreadyExists;
+import exceptions.PlayerAlreadyExistsException;
 import org.junit.jupiter.api.Test;
-
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -12,6 +10,7 @@ class GameTest {
     void testAddPlayerDoesNotThrowExceptionWhenNewPlayerIsAdded() {
         assertDoesNotThrow(() -> {
             var game = new Game();
+            game.start();
             game.addPlayer(new Player("p1"));
             game.addPlayer(new Player("p2"));
             game.addPlayer(new Player("p3"));
@@ -21,14 +20,14 @@ class GameTest {
     @Test
     void testAddPlayerThrowsAnExceptionIfPlayerAlreadyInGame() {
         assertAll(() -> {
-            var message = assertThrows(PlayerAlreadyExists.class, () -> {
+            var message = assertThrows(PlayerAlreadyExistsException.class, () -> {
                 var game = new Game();
                 game.addPlayer(new Player("p1"));
                 game.addPlayer(new Player("p1"));
             });
 
             assertEquals("Player already exists!", message.getMessage());
-            assertThrows(PlayerAlreadyExists.class, () -> {
+            assertThrows(PlayerAlreadyExistsException.class, () -> {
                 var game = new Game();
                 game.addPlayer(new Player("p2"));
                 game.addPlayer(new Player("p2"));

@@ -1,7 +1,7 @@
 package exceptions;
 
-public class PlayerAlreadyExists extends Exception {
-    public PlayerAlreadyExists(String message) {
+public class PlayerAlreadyExistsException extends Exception {
+    public PlayerAlreadyExistsException(String message) {
         super(message);
     }
 
