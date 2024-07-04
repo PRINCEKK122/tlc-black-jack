@@ -16,6 +16,7 @@ public class Main {
                 new Player("p1"),
                 new Player("p2"),
                 new Player("p3")
+//                new Player("p4")
         );
         game.start();
 

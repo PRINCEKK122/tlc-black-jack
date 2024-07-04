@@ -8,12 +8,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class Game {
     private final List<Card> deckOfCards = new ArrayList<>();
     private List<Player> players = new ArrayList<>();
-    private Collection<Player> duplicatePlayers = new ArrayList<>();
+    private Collection<Player> duplicatePlayers;
 
     private boolean gameOver = false;
 
@@ -50,7 +51,7 @@ public class Game {
     }
 
     public void inProgress() {
-        duplicatePlayers = players.stream().toList();
+        duplicatePlayers = new ArrayList<>(players);
 
         isGameOver();
         while (!gameOver) {
@@ -72,25 +73,33 @@ public class Game {
     }
 
     private void isGameOver() {
-        var winner = players.stream().anyMatch(p -> p.getPlayerStrategy().equals(PlayerStrategy.WINNER));
-        if (winner) {
-           gameOver = true;
-           return;
-       }
+        players = players.stream()
+                .filter(p -> !(p.getPlayerStrategy().equals(PlayerStrategy.GO_BUST)))
+                .collect(Collectors.toList());
 
-        var allStick = players.stream().allMatch(p -> p.getPlayerStrategy().equals(PlayerStrategy.STICK));
-        if (allStick) {
+        if (players.size() == 1) {
+            gameOver = true;
+            return;
+        }
+
+        Predicate<Player> winners = p -> p.getPlayerStrategy().equals(PlayerStrategy.WINNER);
+        var winner = players.stream().anyMatch(winners);
+        if (winner) {
+            players = players.stream().filter(winners).collect(Collectors.toList());
             gameOver = true;
             return;
        }
 
-           players = players.stream()
-                   .filter(p -> !(p.getPlayerStrategy().equals(PlayerStrategy.GO_BUST)))
-                   .collect(Collectors.toList());
+        var allStick = players.stream().allMatch(p -> p.getPlayerStrategy().equals(PlayerStrategy.STICK));
 
-           if (players.size() == 1) gameOver = true;
-
-//           inProgress();
+        if (allStick) {
+            var highest = players.stream().mapToInt(Player::totalCardsValue).max().orElse(0);
+            players = players.stream()
+                    .filter(p -> p.totalCardsValue() == highest)
+                    .collect(Collectors.toList());
+            gameOver = true;
+       }
+//       inProgress();
     }
 
     @Override
