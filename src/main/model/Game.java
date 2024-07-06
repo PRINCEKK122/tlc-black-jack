@@ -5,7 +5,6 @@ import exceptions.EmptyCardException;
 import exceptions.PlayerAlreadyExistsException;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
@@ -14,7 +13,7 @@ import java.util.stream.Collectors;
 public class Game {
     private final List<Card> deckOfCards = new ArrayList<>();
     private List<Player> players = new ArrayList<>();
-    private Collection<Player> duplicatePlayers;
+    private final List<Player> originalPlayers = new ArrayList<>();
 
     private boolean gameOver = false;
 
@@ -26,10 +25,6 @@ public class Game {
         }
 
         shuffleCards();
-    }
-
-    private void shuffleCards() {
-        Collections.shuffle(deckOfCards);
     }
 
     public void addPlayer(Player player) throws
@@ -45,27 +40,35 @@ public class Game {
         if (deckOfCards.isEmpty())
             throw new EmptyCardException("Deck of cards is empty!");
 
-        player.addCard(deckOfCards.remove(deckOfCards.size() - 1));
-        player.addCard(deckOfCards.remove(deckOfCards.size() - 1));
+        drawCard(player);
+        drawCard(player);
         players.add(player);
     }
 
     public void inProgress() {
-        duplicatePlayers = new ArrayList<>(players);
-
-        isGameOver();
-        while (!gameOver) {
+        do {
+            isGameOver();
             players.stream()
                     .filter(p -> p.getPlayerStrategy().equals(PlayerStrategy.HIT))
                     .forEach(this::drawCard);
 
-            isGameOver();
-        }
-        determineWinner();
+        } while (!gameOver);
+        displayResults("ORIGINAL PLAYERS", originalPlayers);
+        printWinner();
     }
 
-    private void determineWinner() {
-        System.out.println("Winner(s): " + players.toString());
+    private void shuffleCards() {
+        Collections.shuffle(deckOfCards);
+    }
+
+    private void printWinner() {
+        displayResults("WINNER(S)", players);
+    }
+
+    private void displayResults(String message, List<Player> players) {
+        System.out.println(message);
+        System.out.println("==================================");
+        players.forEach(System.out::println);
     }
 
     private void drawCard(Player player) {
@@ -73,6 +76,12 @@ public class Game {
     }
 
     private void isGameOver() {
+        players.forEach(p -> {
+            if (!originalPlayers.contains(p)) {
+                originalPlayers.add(p);
+            }
+        });
+
         players = players.stream()
                 .filter(p -> !(p.getPlayerStrategy().equals(PlayerStrategy.GO_BUST)))
                 .collect(Collectors.toList());
@@ -88,7 +97,7 @@ public class Game {
             players = players.stream().filter(winners).collect(Collectors.toList());
             gameOver = true;
             return;
-       }
+        }
 
         var allStick = players.stream().allMatch(p -> p.getPlayerStrategy().equals(PlayerStrategy.STICK));
 
@@ -98,12 +107,6 @@ public class Game {
                     .filter(p -> p.totalCardsValue() == highest)
                     .collect(Collectors.toList());
             gameOver = true;
-       }
-//       inProgress();
-    }
-
-    @Override
-    public String toString() {
-        return duplicatePlayers.toString();
+        }
     }
 }

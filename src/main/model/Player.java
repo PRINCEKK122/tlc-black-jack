@@ -47,7 +47,7 @@ public class Player {
 
     @Override
     public String toString() {
-        return "\n\t" + name + ": " + totalCardsValue()
+        return name + ": " + totalCardsValue()
                 + " points, strategy: " + getPlayerStrategy()
                 + ", cards ==> " + cards;
     }

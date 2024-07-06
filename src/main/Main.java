@@ -15,19 +15,21 @@ public class Main {
         List<Player> players = List.of(
                 new Player("p1"),
                 new Player("p2"),
-                new Player("p3")
-//                new Player("p4")
+                new Player("p3"),
+                new Player("p4"),
+                new Player("p5")
         );
-        game.start();
 
+        game.start();
         try {
           for (Player player : players)
               game.addPlayer(player);
-          game.inProgress();
         } catch (PlayerAlreadyExistsException | EmptyCardException ex) {
             System.out.println(ex.getMessage());
         }
 
-        System.out.println(game);
+
+        game.inProgress();
+
     }
 }
