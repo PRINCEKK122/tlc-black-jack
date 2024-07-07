@@ -13,7 +13,24 @@ import java.util.stream.Collectors;
 public class Game {
     private final List<Card> deckOfCards = new ArrayList<>();
     private List<Player> players = new ArrayList<>();
+
     private final List<Player> originalPlayers = new ArrayList<>();
+
+    public Game(int numOfPlayers) {
+        setNumOfPlayers(numOfPlayers);
+    }
+
+    private void setNumOfPlayers(int value) {
+        if (value == 0) {
+            players = new ArrayList<>(3);
+            for (int i = 1; i <= 3; i++)
+                players.add(new Player("Player " + i));
+            return;
+        }
+
+        if (value <= 1 || value > 6)
+            throw new IllegalArgumentException("Number of players should be between 2 to 6 inclusive!");
+    }
 
     private boolean gameOver = false;
 
@@ -46,32 +63,33 @@ public class Game {
     }
 
     public void inProgress() {
-        do {
-            isGameOver();
+        isGameOver();
+        while (!gameOver) {
             players.stream()
                     .filter(p -> p.getPlayerStrategy().equals(PlayerStrategy.HIT))
                     .forEach(this::drawCard);
+            isGameOver();
+        }
 
-        } while (!gameOver);
-        displayResults("ORIGINAL PLAYERS", originalPlayers);
-        printWinner();
+        printResults();
     }
 
     private void shuffleCards() {
         Collections.shuffle(deckOfCards);
     }
 
-    private void printWinner() {
-        displayResults("WINNER(S)", players);
-    }
+    private void printResults() {
+        originalPlayers.forEach(System.out::println);
+        System.out.println("=".repeat(20));
 
-    private void displayResults(String message, List<Player> players) {
-        System.out.println(message);
-        System.out.println("==================================");
-        players.forEach(System.out::println);
+        System.out.println("WINNER(S)");
+        System.out.println("=".repeat(20));
+        players.forEach(p -> System.out.println(p.getName() + ": " + p.totalCardsValue() + " points."));
     }
 
     private void drawCard(Player player) {
+        if (players.size() <= 1)
+            return;
         player.addCard(deckOfCards.remove(deckOfCards.size() - 1));
     }
 

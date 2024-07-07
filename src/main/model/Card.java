@@ -17,12 +17,8 @@ public class Card {
 
     @Override
     public String toString() {
-        String result = " of " + suit;
-
-        if (getCardValue() < 10 || value.equals(CardValue.TEN)) {
-            return value.getCardValue() + result;
-        }
-
-        return value + result;
+        return value.getCardValue() +  " "
+                + value.name()
+                + " " + suit.name();
     }
 }

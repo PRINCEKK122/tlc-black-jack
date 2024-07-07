@@ -9,7 +9,7 @@ class GameTest {
     @Test
     void testAddPlayerDoesNotThrowExceptionWhenNewPlayerIsAdded() {
         assertDoesNotThrow(() -> {
-            var game = new Game();
+            var game = new Game(3);
             game.start();
             game.addPlayer(new Player("p1"));
             game.addPlayer(new Player("p2"));
@@ -21,14 +21,16 @@ class GameTest {
     void testAddPlayerThrowsAnExceptionIfPlayerAlreadyInGame() {
         assertAll(() -> {
             var message = assertThrows(PlayerAlreadyExistsException.class, () -> {
-                var game = new Game();
+                var game = new Game(2);
+                game.start();
                 game.addPlayer(new Player("p1"));
                 game.addPlayer(new Player("p1"));
             });
 
             assertEquals("Player already exists!", message.getMessage());
             assertThrows(PlayerAlreadyExistsException.class, () -> {
-                var game = new Game();
+                var game = new Game(2);
+                game.start();
                 game.addPlayer(new Player("p2"));
                 game.addPlayer(new Player("p2"));
             });

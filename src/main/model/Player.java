@@ -47,8 +47,18 @@ public class Player {
 
     @Override
     public String toString() {
-        return name + ": " + totalCardsValue()
-                + " points, strategy: " + getPlayerStrategy()
-                + ", cards ==> " + cards;
+        StringBuilder builder = new StringBuilder();
+        builder.append(name).append(" is dealt : ").append("\n");
+
+        for (Card card : cards) {
+            builder.append(card).append("\n");
+        }
+
+        builder.append("-".repeat(20))
+                .append("\nTotal points: ")
+                .append(totalCardsValue())
+                .append("\n");
+
+        return builder.toString();
     }
 }
